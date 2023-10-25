@@ -1,0 +1,577 @@
+﻿<Window x:Class="DataEncrypt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataEncrypt"
+        mc:Ignorable="d"
+        Title="DataEncrypt" Height="450" Width="800" WindowStartupLocation="CenterScreen" MinHeight="450" MinWidth="800" Closing="Window_Closing" Loaded="Window_Loaded">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="ButtonsStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" CornerRadius="2" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FocusVisual1">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="OptionMarkFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="14,0,0,0" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="OptionMark.Static.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="OptionMark.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="OptionMark.Static.Glyph" Color="#FF212121"/>
+        <SolidColorBrush x:Key="OptionMark.MouseOver.Background" Color="#FFF3F9FF"/>
+        <SolidColorBrush x:Key="OptionMark.MouseOver.Border" Color="#FF5593FF"/>
+        <SolidColorBrush x:Key="OptionMark.MouseOver.Glyph" Color="#FF212121"/>
+        <SolidColorBrush x:Key="OptionMark.Pressed.Background" Color="#FFD9ECFF"/>
+        <SolidColorBrush x:Key="OptionMark.Pressed.Border" Color="#FF3C77DD"/>
+        <SolidColorBrush x:Key="OptionMark.Pressed.Glyph" Color="#FF212121"/>
+        <SolidColorBrush x:Key="OptionMark.Disabled.Background" Color="#FFE6E6E6"/>
+        <SolidColorBrush x:Key="OptionMark.Disabled.Border" Color="#FFBCBCBC"/>
+        <SolidColorBrush x:Key="OptionMark.Disabled.Glyph" Color="#FF707070"/>
+        <Style x:Key="CheckBoxStyle" TargetType="{x:Type CheckBox}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual1}"/>
+            <Setter Property="Background" Value="{StaticResource OptionMark.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource OptionMark.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid x:Name="templateRoot" Background="Transparent" SnapsToDevicePixels="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="checkBoxBorder" CornerRadius="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <Grid x:Name="markGrid">
+                                    <Path x:Name="optionMark" Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " Fill="{StaticResource OptionMark.Static.Glyph}" Margin="1" Opacity="0" Stretch="None"/>
+                                    <Rectangle x:Name="indeterminateMark" Fill="{StaticResource OptionMark.Static.Glyph}" Margin="2" Opacity="0"/>
+                                </Grid>
+                            </Border>
+                            <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasContent" Value="true">
+                                <Setter Property="FocusVisualStyle" Value="{StaticResource OptionMarkFocusVisual}"/>
+                                <Setter Property="Padding" Value="4,-1,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.MouseOver.Border}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.MouseOver.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.MouseOver.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Disabled.Border}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.Disabled.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.Disabled.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Pressed.Border}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.Pressed.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.Pressed.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Opacity" TargetName="optionMark" Value="1"/>
+                                <Setter Property="Opacity" TargetName="indeterminateMark" Value="0"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="{x:Null}">
+                                <Setter Property="Opacity" TargetName="optionMark" Value="0"/>
+                                <Setter Property="Opacity" TargetName="indeterminateMark" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <SolidColorBrush x:Key="ProgressBar.Progress" Color="#FF26D931"/>
+        <SolidColorBrush x:Key="ProgressBar.Background" Color="#FFE6E6E6"/>
+        <SolidColorBrush x:Key="ProgressBar.Border" Color="#FFBCBCBC"/>
+
+        <Style x:Key="ProgressBarStyle" TargetType="{x:Type ProgressBar}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.Progress}"/>
+            <Setter Property="Background" Value="{StaticResource ProgressBar.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ProgressBar}">
+                        <Grid x:Name="TemplateRoot">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Determinate"/>
+                                    <VisualState x:Name="Indeterminate">
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Animation" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0.25"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.25"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:2" Value="0.25"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <PointAnimationUsingKeyFrames Storyboard.TargetName="Animation" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+                                                <EasingPointKeyFrame KeyTime="0" Value="-0.5,0.5"/>
+                                                <EasingPointKeyFrame KeyTime="0:0:1" Value="0.5,0.5"/>
+                                                <EasingPointKeyFrame KeyTime="0:0:2" Value="1.5,0.5"/>
+                                            </PointAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border Background="{TemplateBinding Background}" CornerRadius="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
+                            <Rectangle x:Name="PART_Track"/>
+                            <Grid x:Name="PART_Indicator" ClipToBounds="true" HorizontalAlignment="Left">
+                                <Rectangle x:Name="Indicator" Fill="{TemplateBinding Foreground}"/>
+                                <Rectangle x:Name="Animation" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="0.5,0.5">
+                                    <Rectangle.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Rectangle.RenderTransform>
+                                </Rectangle>
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter Property="LayoutTransform" TargetName="TemplateRoot">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsIndeterminate" Value="true">
+                                <Setter Property="Visibility" TargetName="Indicator" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <TabControl x:Name="Tabs">
+            
+            <TabItem x:Name="PageText" 
+                     Header="Текст" 
+                     Width="63">
+                
+                <Grid Background="#FFFFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="111*"/>
+                        <RowDefinition Height="92*"/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Header="Исходный текст:" 
+                              Margin="28,63,28,10" 
+                              FontSize="14" 
+                              FontWeight="Bold">
+                        
+                        <TextBox x:Name="OriginalTB" 
+                                 Margin="-1,-1,-1,-1" 
+                                 TextWrapping="NoWrap" 
+                                 BorderThickness="0" 
+                                 Background="Transparent" 
+                                 AcceptsReturn="True" 
+                                 HorizontalScrollBarVisibility="Auto" 
+                                 VerticalScrollBarVisibility="Auto" 
+                                 FontSize="12" 
+                                 FontWeight="Normal" 
+                                 TextChanged="OriginalTB_TextChanged"/>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="1" 
+                              Header="Измененный текст:" 
+                              Margin="28,10,28,26" 
+                              FontSize="14" 
+                              FontWeight="Bold">
+                        
+                        <TextBox x:Name="ChangeTB" TextWrapping="NoWrap" 
+                                 Grid.Row="1" 
+                                 BorderThickness="0" 
+                                 Background="Transparent" 
+                                 AcceptsReturn="True" 
+                                 HorizontalScrollBarVisibility="Auto" 
+                                 VerticalScrollBarVisibility="Auto" 
+                                 FontSize="12" 
+                                 FontWeight="Normal" 
+                                 IsReadOnly="True"/>
+                    </GroupBox>
+
+                    <GroupBox Header="Режим:" 
+                              Margin="28,0,0,0" 
+                              HorizontalAlignment="Left" 
+                              Width="269" 
+                              Height="58" 
+                              VerticalAlignment="Top" 
+                              FontWeight="Bold" 
+                              FontSize="14" >
+                        
+                        <Grid Background="#FFFFFFFF">
+                            
+                            <RadioButton x:Name="EncryptTextModeBtn" 
+                                         Content="Зашифровать" 
+                                         HorizontalAlignment="Left" 
+                                         Margin="10,10,0,4" 
+                                         IsChecked="True" 
+                                         FontWeight="Normal" 
+                                         FontSize="12"/>
+                            <RadioButton x:Name="DecryptTextModeBtn" 
+                                         Content="Расшифровать" 
+                                         Margin="127,10,0,4" 
+                                         HorizontalAlignment="Left" 
+                                         Width="105" 
+                                         FontWeight="Normal" 
+                                         FontSize="12"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <Button x:Name="TextStartBtn" 
+                            Style="{DynamicResource ButtonsStyle}" 
+                            Content="Пуск" 
+                            HorizontalAlignment="Left" 
+                            Margin="314,16,0,0"
+                            VerticalAlignment="Top" 
+                            Width="108" 
+                            Height="36" 
+                            Click="TextStartBtn_Click" 
+                            IsEnabled="False"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="PageFile" 
+                     Header="Файлы"
+                     Width="69"
+                     IsEnabled="{Binding ElementName=PageText, Path=IsEnabled}">
+                
+                <Grid Background="#FFFFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Header="Режим:" 
+                              Margin="28,0,0,0" 
+                              HorizontalAlignment="Left" 
+                              Width="269" 
+                              Height="58" 
+                              VerticalAlignment="Top" 
+                              FontWeight="Bold" 
+                              FontSize="14" >
+
+                        <Grid Background="#FFFFFFFF">
+                            
+                            <RadioButton x:Name="EncryptFileModeBtn" 
+                                         Content="Зашифровать" 
+                                         HorizontalAlignment="Left" 
+                                         Margin="10,10,0,4" 
+                                         IsChecked="True" 
+                                         FontWeight="Normal" 
+                                         FontSize="12"/>
+                            
+                            <RadioButton x:Name="DecryptFileModeBtn" 
+                                         Content="Расшифровать" 
+                                         Margin="127,10,0,4"
+                                         HorizontalAlignment="Left" 
+                                         Width="105" 
+                                         FontWeight="Normal" 
+                                         FontSize="12"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <Button x:Name="FileStartBtn" 
+                            Style="{StaticResource ResourceKey=ButtonsStyle}" 
+                            Content="Пуск" 
+                            Width="108" 
+                            Height="36" 
+                            VerticalAlignment="Top" 
+                            HorizontalAlignment="Left" 
+                            Margin="314,16,0,0"
+                            Click="FileStartBtn_Click" 
+                            IsEnabled="{Binding Items.Count, ElementName=FilesListBox}"/>
+
+                    <GroupBox Header="Список файлов:" 
+                              Margin="28,63,28,26" 
+                              FontSize="14" 
+                              FontWeight="Bold">
+                        
+                        <ListBox x:Name="FilesListBox" 
+                                 Margin="0,0,-2,0" 
+                                 BorderThickness="0" 
+                                 SelectionMode="Multiple" 
+                                 FontWeight="Normal" 
+                                 FontSize="12" 
+                                 AllowDrop="True" 
+                                 DragOver="FilesListBox_DragOver" 
+                                 KeyDown="FilesListBox_KeyDown" 
+                                 KeyUp="FilesListBox_KeyUp"/>
+                    </GroupBox>
+
+                    <Button x:Name="ItemAddBtn" 
+                            Style="{StaticResource ResourceKey=ButtonsStyle}" 
+                            Content="📎" 
+                            Click="ItemAddBtn_Click" 
+                            FontSize="22" 
+                            FontStretch="Normal" 
+                            Width="36" 
+                            Height="36" 
+                            VerticalAlignment="Top" 
+                            HorizontalAlignment="Left" 
+                            Margin="446,16,0,0"
+                            ToolTip="Добавить файлы"/>
+
+                    <Button x:Name="ItemDelBtn" 
+                            Style="{StaticResource ResourceKey=ButtonsStyle}" 
+                            Content="🗑️" 
+                            HorizontalAlignment="Left" 
+                            VerticalAlignment="Top" 
+                            Width="36" 
+                            Height="36" 
+                            Click="ItemDelBtn_Click" 
+                            FontSize="22" 
+                            Margin="490,16,0,0" 
+                            IsEnabled="{Binding ElementName=FileStartBtn, Path=IsEnabled}"
+                            ToolTip="Удалить файлы"/>
+
+                    <Border x:Name="DropInfo" 
+                            Margin="29,63,29,26" 
+                            Visibility="Hidden" 
+                            Background="LightGray" 
+                            BorderThickness="0" 
+                            CornerRadius="5" 
+                            AllowDrop="True" 
+                            Drop="DropInfo_Drop" 
+                            DragLeave="DropInfo_DragLeave">
+                        
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="262*"/>
+                                <ColumnDefinition Width="209*"/>
+                                <ColumnDefinition Width="262*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="64*"/>
+                                <RowDefinition Height="166*"/>
+                                <RowDefinition Height="103*"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Source="/Resources/File.png" 
+                                   Margin="15,0,15,0" 
+                                   Grid.Row="1" 
+                                   Grid.Column="1" 
+                                   Height="140"
+                                   VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Grid x:Name="EncryptProcess" 
+                          Background="#FFFFFFFF"
+                          Visibility="Hidden">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="65*"/>
+                            <RowDefinition Height="138*"/>
+                        </Grid.RowDefinitions>
+
+                        <ProgressBar x:Name="EncryptProcessPB" 
+                                     Style="{DynamicResource ProgressBarStyle}"
+                                     HorizontalAlignment="Center"
+                                     Height="30" 
+                                     VerticalAlignment="Top" 
+                                     Width="242" 
+                                     Margin="0,22,0,0" 
+                                     Grid.Row="1"/>
+
+                        <Label x:Name="EncryptProcessL" 
+                               Content="" 
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Top" 
+                               Margin="0,73,0,0" 
+                               Grid.Row="1"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="PageSettings" 
+                     Header="Настройки" 
+                     Width="98">
+                
+                <Grid Background="#FFFFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Header="Ключ шифрования (32 символа):" 
+                              FontWeight="Bold" 
+                              FontSize="14" 
+                              Height="46" 
+                              VerticalAlignment="Top" 
+                              Margin="28,0,28,0">
+
+                        <Grid Background="#FFFFFFFF">
+
+                            <TextBox x:Name="SecretKeyTB" 
+                                     TextWrapping="Wrap" 
+                                     FontSize="12" 
+                                     FontWeight="Normal"
+                                     BorderThickness="0"   
+                                     MaxLength="32" 
+                                     TextChanged="SecretKeyTB_TextChanged"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <CheckBox x:Name="GenAutoBox" 
+                              Style="{DynamicResource CheckBoxStyle}" 
+                              Content="Сгенерировать автоматически" 
+                              HorizontalAlignment="Left" 
+                              Margin="36,51,0,0" 
+                              Height="23" 
+                              VerticalAlignment="Top" 
+                              FontSize="12" 
+                              FontWeight="Normal" 
+                              IsChecked="False" 
+                              Click="GenAutoBox_Click" 
+                              Checked="GenAutoBox_Checked"/>
+
+                    <Button x:Name="SaveChangesBtn"
+                            Style="{StaticResource ResourceKey=ButtonsStyle}"
+                            Content="Сохранить изменения" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Top" 
+                            Width="162" 
+                            Height="32" 
+                            Margin="0,78,0,0"  
+                            FontSize="12" 
+                            FontWeight="Normal" 
+                            Click="SaveChangesBtn_Click" 
+                            IsEnabled="False"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="PageAbout" 
+                     Header="О программе" 
+                     Width="106"
+                     IsEnabled="{Binding ElementName=PageText, Path=IsEnabled}">
+                
+                <Grid Background="#FFFFFFFF">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="176*"/>
+                        <ColumnDefinition Width="148*"/>
+                        <ColumnDefinition Width="16*"/>
+                        <ColumnDefinition Width="125*"/>
+                        <ColumnDefinition Width="170*"/>
+                        <ColumnDefinition Width="159*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="116*"/>
+                        <RowDefinition Height="219*"/>
+                        <RowDefinition Height="71*"/>
+                    </Grid.RowDefinitions>
+
+                    <Image Source="/Resources/About.png" 
+                           Margin="0,3,0,0" 
+                           Grid.Row="1"
+                           Grid.Column="1" 
+                           Height="146" 
+                           VerticalAlignment="Top" 
+                           HorizontalAlignment="Right" 
+                           Width="137"/>
+
+                    <TextBox BorderThickness="0" 
+                             TextWrapping="Wrap" 
+                             Text="DataEncrypt v.0.1 Alpha от 15.09.2023 (64-bit)&#xA;&#xA;©2023 FrogPro, Inc.&#xA;Все права защищены.&#xA;&#xA;Спасибо за использование данной программы.&#xD;&#xA;Надеемся, что она вам понравилась." 
+                             Margin="2,3,0,0" 
+                             Grid.Row="1" 
+                             Grid.Column="3" 
+                             Height="146" 
+                             VerticalAlignment="Top" 
+                             Grid.ColumnSpan="2" 
+                             HorizontalAlignment="Left" 
+                             Width="283" 
+                             IsReadOnly="True"/>
+
+                    <Button x:Name="GoSiteBtn" 
+                            Style="{StaticResource ResourceKey=ButtonsStyle}" 
+                            Content="Сайт" 
+                            Click="GoSiteBtn_Click" 
+                            Margin="2,154,0,0" 
+                            Grid.Row="1" 
+                            Grid.Column="3" 
+                            Height="34" 
+                            VerticalAlignment="Top" 
+                            HorizontalAlignment="Left" 
+                            Width="120"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
