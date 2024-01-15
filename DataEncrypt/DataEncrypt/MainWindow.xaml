@@ -1,0 +1,280 @@
+﻿<Window x:Class="DataEncrypt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:DataEncrypt.ViewModels"
+        xmlns:interactive="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:properties="clr-namespace:DataEncrypt.Properties"
+        mc:Ignorable="d" MinHeight="450" MinWidth="800" Icon="/Data/Media/Icon.ico"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainVM}"                 
+        Title="DataEncrypt" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DataEncrypt;component/Resources/ButtonResources.xaml"/>
+                <ResourceDictionary Source="/DataEncrypt;component/Resources/CheckboxResources.xaml"/>
+                <ResourceDictionary Source="/DataEncrypt;component/Resources/ConvertResources.xaml"/>
+                <ResourceDictionary Source="/DataEncrypt;component/Resources/ProgressbarResources.xaml"/>
+                <ResourceDictionary Source="/DataEncrypt;component/Resources/TabsControlResources.xaml"/>
+                <ResourceDictionary Source="/DataEncrypt;component/Resources/TabItemsResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <interactive:Interaction.Triggers>
+        <interactive:EventTrigger EventName="Closing">
+            <interactive:InvokeCommandAction Command="{Binding ClosingCommand}"/>
+        </interactive:EventTrigger>
+    </interactive:Interaction.Triggers>
+
+    <Grid>
+        <TabControl Template="{DynamicResource TabControlsTemplate}" x:Name="Tabs"
+                    IsEnabled="{Binding TProcess, Converter={StaticResource InvertBoolConverter}}">
+
+            <TabItem Template="{DynamicResource TabItemsTemplate}" x:Name="PageText" Header="Текст" Width="63"
+                     IsEnabled="{Binding TabsEnable}">
+
+                <Grid Background="#FFFFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="111*"/>
+                        <RowDefinition Height="92*"/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Header="Исходный текст:" Margin="28,63,28,10" FontSize="14" FontWeight="Bold">
+
+                        <TextBox x:Name="OriginalTB" Margin="-1,-1,-1,-1" TextWrapping="NoWrap" BorderThickness="0" 
+                                 Background="Transparent" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" 
+                                 VerticalScrollBarVisibility="Auto" FontSize="12" FontWeight="Normal"
+                                 Text="{Binding StartText}">
+
+                            <interactive:Interaction.Triggers>
+                                <interactive:EventTrigger EventName="TextChanged">
+                                    <interactive:InvokeCommandAction Command="{Binding ClearCommand}"/>
+                                </interactive:EventTrigger>
+                            </interactive:Interaction.Triggers>
+
+                        </TextBox>
+
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="1" Header="Измененный текст:" Margin="28,10,28,26" FontSize="14" FontWeight="Bold">
+
+                        <TextBox x:Name="ChangeTB" TextWrapping="NoWrap" Grid.Row="1" BorderThickness="0" 
+                                 Background="Transparent" AcceptsReturn="True" FontWeight="Normal"
+                                 HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
+                                 FontSize="12" IsReadOnly="True" Text="{Binding EndText}"/>
+                    </GroupBox>
+
+                    <GroupBox Header="Режим:" Margin="28,0,0,0" HorizontalAlignment="Left" Width="269" Height="58" 
+                              VerticalAlignment="Top" FontWeight="Bold" FontSize="14" >
+
+                        <Grid Background="#FFFFFFFF">
+
+                            <RadioButton x:Name="EncryptTextModeBtn" Content="Зашифровать" HorizontalAlignment="Left" 
+                                         Margin="10,10,0,4" FontWeight="Normal" FontSize="12"
+                                         IsChecked="{Binding ElementName=DecryptTextModeBtn,
+                                         Path=IsChecked, Converter={StaticResource InvertBoolConverter}}"/>
+                            <RadioButton x:Name="DecryptTextModeBtn" Content="Расшифровать" Margin="127,10,0,4" 
+                                         HorizontalAlignment="Left" Width="105" FontWeight="Normal" FontSize="12"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <Button x:Name="TextStartBtn" Style="{DynamicResource ButtonsStyle}" Content="Пуск" Height="36"                        
+                            HorizontalAlignment="Left" Margin="314,16,0,0" VerticalAlignment="Top" Width="108" 
+                            Command="{Binding TransformTextCommand}"
+                            CommandParameter="{Binding ElementName=EncryptTextModeBtn, Path=IsChecked}"
+                            IsEnabled="{Binding ElementName=OriginalTB, Path=Text, Converter={StaticResource StrToBool}}"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Template="{DynamicResource TabItemsTemplate}" x:Name="PageFile" Header="Файлы" Width="69"
+                     IsEnabled="{Binding TabsEnable}">
+
+                <Grid Background="#FFFFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Header="Режим:" Margin="28,0,0,0" HorizontalAlignment="Left" Width="269" 
+                              Height="58" VerticalAlignment="Top" FontWeight="Bold" FontSize="14">
+
+                        <Grid Background="#FFFFFFFF">
+
+                            <RadioButton x:Name="EncryptFileModeBtn" Content="Зашифровать" HorizontalAlignment="Left" 
+                                         Margin="10,10,0,4" FontSize="12" FontWeight="Normal"
+                                         IsChecked="{Binding ElementName=DecryptFileModeBtn,
+                                         Path=IsChecked, Converter={StaticResource InvertBoolConverter}}"/>
+
+                            <RadioButton x:Name="DecryptFileModeBtn" Content="Расшифровать" Margin="127,10,0,4"
+                                         HorizontalAlignment="Left" Width="105" FontWeight="Normal" FontSize="12"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <Button x:Name="FileStartBtn" Style="{StaticResource ResourceKey=ButtonsStyle}" Content="Пуск" 
+                            Width="108" Height="36" VerticalAlignment="Top" HorizontalAlignment="Left" 
+                            Margin="314,16,0,0" IsEnabled="{Binding Items.Count, ElementName=FilesListBox}"
+                            Command="{Binding TransformDataCommand}"
+                            CommandParameter="{Binding ElementName=EncryptFileModeBtn, Path=IsChecked}"/>
+
+                    <GroupBox Header="Список файлов:" Margin="28,63,28,26" FontSize="14" FontWeight="Bold">
+
+                        <ListBox x:Name="FilesListBox" Margin="0,0,-2,0" BorderThickness="0" AllowDrop="True" 
+                                 SelectionMode="Extended" FontWeight="Normal" FontSize="12" 
+                                 ItemsSource="{Binding FilePaths}" FocusVisualStyle="{x:Null}">
+
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Content" Value="{Binding FileName}"/>
+                                    <Setter Property="IsSelected" Value="{Binding IsChecked}"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+
+                            <ListBox.InputBindings>
+                                <KeyBinding Gesture="Ctrl+A" Command="{Binding SelectAllCommand}"/>
+                                <KeyBinding Gesture="Delete" Command="{Binding RemoveCommand}"/>
+                            </ListBox.InputBindings>
+
+                            <interactive:Interaction.Triggers>
+                                <interactive:EventTrigger EventName="DragOver">
+                                    <interactive:InvokeCommandAction Command="{Binding DragShowCommand}"
+                                                                     CommandParameter="True"/>
+                                </interactive:EventTrigger>
+                            </interactive:Interaction.Triggers>
+
+                        </ListBox>
+                    </GroupBox>
+
+                    <Button x:Name="ItemAddBtn" Style="{StaticResource ResourceKey=ButtonsStyle}" Content="📎" 
+                            FontSize="22" FontStretch="Normal" Width="36" Height="36" VerticalAlignment="Top" 
+                            HorizontalAlignment="Left" Margin="446,16,0,0" ToolTip="Добавить файлы"
+                            Command="{Binding AddCommand}"/>
+
+                    <Button x:Name="ItemDelBtn" Style="{StaticResource ResourceKey=ButtonsStyle}" Content="🗑️" 
+                            HorizontalAlignment="Left" VerticalAlignment="Top" Width="36" Height="36" 
+                            FontSize="22" Margin="490,16,0,0" ToolTip="Удалить файлы"
+                            IsEnabled="{Binding ElementName=FileStartBtn, Path=IsEnabled}"
+                            Command="{Binding RemoveCommand}"/>
+
+                    <Border x:Name="DropInfo" Margin="29,63,29,26" Background="LightGray" BorderThickness="0"
+                            CornerRadius="5" AllowDrop="True"
+                            Visibility="{Binding DropInfoVisible, Converter={StaticResource BoolToVis}}">
+
+                        <interactive:Interaction.Triggers>
+                            <interactive:EventTrigger EventName="Drop">
+                                <interactive:InvokeCommandAction Command="{Binding DragCommand}"
+                                                                 PassEventArgsToCommand="True"/>
+                            </interactive:EventTrigger>
+                            <interactive:EventTrigger EventName="DragLeave">
+                                <interactive:InvokeCommandAction Command="{Binding DragShowCommand}"
+                                                                 CommandParameter="False"/>
+                            </interactive:EventTrigger>
+                        </interactive:Interaction.Triggers>
+
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="262*"/>
+                                <ColumnDefinition Width="209*"/>
+                                <ColumnDefinition Width="262*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="64*"/>
+                                <RowDefinition Height="166*"/>
+                                <RowDefinition Height="103*"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Source="/Data/Media/File.png" Margin="15,0,15,0" Grid.Row="1" Grid.Column="1" 
+                                   Height="140" VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Grid x:Name="EncryptProcess" Background="#FFFFFFFF"
+                        Visibility="{Binding TProcess, Converter={StaticResource BoolToVis}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="65*"/>
+                            <RowDefinition Height="138*"/>
+                        </Grid.RowDefinitions>
+
+                        <ProgressBar x:Name="EncryptProcessPB" Style="{DynamicResource ProgressBarStyle}"
+                                     HorizontalAlignment="Center" Height="30" VerticalAlignment="Top" Width="242" 
+                                     Margin="0,22,0,0" Grid.Row="1" IsIndeterminate="{Binding TProcess}"/>
+
+                        <Label x:Name="EncryptProcessL" Content="Выполняется обработка файлов..." Grid.Row="1"
+                               HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,73,0,0"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Template="{DynamicResource TabItemsTemplate}" 
+                     x:Name="PageSettings" Header="Настройки" Width="98">
+
+                <Grid Background="#FFFFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Header="Ключ шифрования (32 символа):" FontWeight="Bold" FontSize="14" Height="46" 
+                              VerticalAlignment="Top" Margin="28,0,28,0">
+
+                        <Grid Background="#FFFFFFFF">
+
+                            <TextBox x:Name="SecretKeyTB" TextWrapping="Wrap" FontSize="12" FontWeight="Normal"
+                                     BorderThickness="0" MaxLength="32"
+                                     Text="{Binding Key}" IsEnabled="{Binding ElementName=GenAutoBox, 
+                                        Path=IsChecked, Converter={StaticResource InvertBoolConverter}}"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <CheckBox x:Name="GenAutoBox" Style="{DynamicResource CheckBoxStyle}" HorizontalAlignment="Left"
+                              Content="Сгенерировать автоматически" Margin="36,51,0,0" Height="23" FontSize="12"
+                              VerticalAlignment="Top" FontWeight="Normal"
+                              IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=checkAutoGenBox}"
+                              Command="{Binding GenAutoCommand}"
+                              CommandParameter="{Binding ElementName=GenAutoBox, Path=IsChecked}"/>
+
+                    <Button x:Name="SaveChangesBtn" Style="{StaticResource ResourceKey=ButtonsStyle}" FontSize="12" 
+                            Content="Сохранить изменения" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                            Width="162" Height="32" Margin="0,78,0,0" FontWeight="Normal"
+                            Command="{Binding SaveChangesCommand}" 
+                            IsEnabled="{Binding ElementName=SecretKeyTB, Path=Text, Converter={StaticResource LenToBool}}"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Template="{DynamicResource TabItemsTemplate}" 
+                     x:Name="PageAbout"  Header="О программе" Width="106" IsEnabled="{Binding TabsEnable}">
+
+                <Grid Background="#FFFFFFFF">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="176*"/>
+                        <ColumnDefinition Width="148*"/>
+                        <ColumnDefinition Width="16*"/>
+                        <ColumnDefinition Width="125*"/>
+                        <ColumnDefinition Width="170*"/>
+                        <ColumnDefinition Width="159*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="116*"/>
+                        <RowDefinition Height="219*"/>
+                        <RowDefinition Height="71*"/>
+                    </Grid.RowDefinitions>
+
+                    <Image Source="/Data/Media/About.png" Margin="0,3,0,0" Grid.Row="1" Grid.Column="1" Height="146" 
+                           VerticalAlignment="Top" HorizontalAlignment="Right" Width="137"/>
+
+                    <TextBox BorderThickness="0" TextWrapping="Wrap" Margin="2,3,0,0" VerticalAlignment="Top"  
+                             Grid.Row="1" Grid.Column="3" Height="146" Width="283" Grid.ColumnSpan="2" 
+                             HorizontalAlignment="Left" IsReadOnly="True"
+                             Text="DataEncrypt v.0.1 Alpha от 15.09.2023 (64-bit)&#xA;&#xA;©2023 
+                             FrogPro, Inc.&#xA;Все права защищены.&#xA;&#xA;Спасибо за использование 
+                             данной программы.&#xD;&#xA;Надеемся, что она вам понравилась."/>
+
+                    <Button x:Name="GoSiteBtn" Style="{StaticResource ResourceKey=ButtonsStyle}" Content="Сайт" 
+                            Command="{Binding GoSiteCommand}" Margin="2,154,0,0" Grid.Row="1" Grid.Column="3"
+                            Height="34" Width="120" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
